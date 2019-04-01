@@ -1,0 +1,23 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\select@language {lithuanian}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{Įvadas}{2}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {1.}Medžiagos darbo tema dėstymo skyriai}{3}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.}Load balancing}{4}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3.}Clustered Applications}{5}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {4.}Load balancer būdai ir programinės įrangos}{6}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{\numberline {4.0.0.1.}Sesijos valdymas „clustered applications“}{6}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {5.}HaProxy}{7}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {6.}Algoritmas}{8}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {7.}Komunikavimo įgyvendinimas tarp sesijų}{9}% 
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{Šaltiniai}{10}% 
