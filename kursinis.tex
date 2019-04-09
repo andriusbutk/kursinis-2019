@@ -16,15 +16,15 @@
 
 % Titulinio aprašas
 \university{Vilniaus universitetas}
-\faculty{Matematikos ir informatikos fakultetas}
+\faculty{Informatikos fakultetas}
 \department{Programų sistemų katedra}
 \papertype{Kursinis darbas}
-\title{Programų sistemų kūrimo metodų tyrimas}
-\titleineng{Asynchronous Client-Side Coordination of Cluster Service Sessions}
-\status{3 kurso ... grupės studentas}
+\title{Asinchroninis sesijų komunikavimas Haproxy paskirstymo serveryje, taip padedant greičiau aptikti klaidas}
+\titleineng{...}
+\status{3 kurso 6 grupės studentas}
 \author{Andrius Butkevičius}
 % \secondauthor{Vardonis Pavardonis}   % Pridėti antrą autorių
-\supervisor{prof. habil. dr. Karolis Petrauskas}
+\supervisor{doc. Karolis Petrauskas}
 \date{Vilnius – \the\year}
 
 % Nustatymai
@@ -37,20 +37,17 @@
 \tableofcontents
 
 \sectionnonum{Įvadas}
-Įvade apibūdinamas darbo tikslas, temos aktualumas ir siekiami rezultatai.
-Darbo įvadas neturi būti dėstymo santrauka. Įvado apimtis 1–2 puslapiai.
+	Didėjant žmonių kompiuteriniam raštingumui, interneto populiarumui, nesudėtinga pastebėti, kad atsiranda vis daugiau programinių ar internetinių aplikacijų, kurios vienaip ar kitaip palengvina darbuotojų užduotis, automatizuojant procesus(sumažinant rankinį darbą ir leidžiant paskirti laiką sudėtingesnioms užduotims) ar vykdant sudėtingas operacijas, kurios reikalauja įvairių integracijų: banko sąskaitos pervedimas, mokesčių mokėjimas.
 
-Didėjant žmonių kompiuteriniam raštingumui, interneto populiarumui, nesudėtinga pastebėti, kad atsiranda vis daugiau programinių ar internetinių aplikacijų, kurios vienaip ar kitaip palengvina tam tikrų specialybių žmonėms darbą, automatizuojant procesus ar vykdant sudėtingas ir įvairias operacijas, kurios reikalauja įvairių integracijų: banko sąskaitos pervedimas, mokesčių mokėjimas
+	Nenorint, kad vartotojai ar kitos sistemos, kurios naudojasi kurtomis integracijomis, susidurtų su problemomis, kurių metu nebūtų galima efektyviai naudotis sistema ar ją iš vis pasiekti be nesklandumų, kai ji yra apkrauta didelu prisijungusių vartotojų kiekiu. Todėl vis daugiau programavimo įmonių skiria dėmesį sistemos serverių architektūrai, pasitelkiant nebe monolitinius serverius, o jų šeimas, taip darbo krūvį paskirstant keliems išoriniams serveriams ir taip išvengiant apkrovos ar problemų su pralaidumu.
 
-Nenorint, kad vartotojai ar kitos sistemos, kurios naudojasi kurtomis integracijomis, susidurtų su problemomis, kurių metu nebūtų galima efektyviai naudotis sistema ar ją iš vis pasiekti be nesklandumų, kai ji yra apkrauta didelu prisijungusių vartotojų kiekiu. Todėl vis daugiau programavimo įmonių skiria dėmesį sistemos serverių architektūrai, pasitelkiant nebe monolitinius serverius, o jų šeimas, taip darbo krūvį paskirstant keliems išoriniams serveriams ir taip išvengiant apkrovos ar problemų su bandwidth.
+	Visgi apsisaugoti nuo serverio ryšio problemų, tokių kaip nutrūkęs serverio ryšys neįmanoma, todėl reikia ieškoti sprendimo būdų, kurie kuo įmanoma labiau sumažintų patiriamos klaidos pasėkmes klientui, leidžiant tas klaidas užfiksuoti kuo greičiau, ir taip suvaldant situaciją išanksto.
 
-Visgi apsisaugoti nuo serverio ryšio problemų, tokių kaip nutrūkęs serverio ryšys neįmanoma, todėl reikia ieškoti sprendimo būdų, kurie kuo įmanoma labiau sumažintų patiriamos klaidos pasėkmes klientui, leidžiant tas klaidas užfiksuoti kuo greičiau, ir taip suvaldant situaciją išanksto.
+	Šiame kursiniame darbe bus nagrinėjamas algoritmas ir įgyvendinamas į vieną populiariausių atviro kodo paskirstymo serverių-  „HaProxy" [www.haproxy.org]. Apžvelgsiu kaip šis algoritmas susitvarko su nutrūkusiu ryšių tarp kelių sistemų, palyginsiu jį su kitais sprendimo būdais naudojamais šiomis dienomis.
 
-	Šiame kursiniame darbe nagrinėsiu algoritmą ir implementuosiu jį į vieną populiariausių open-source load balancer sistemų -  „HaProxy" [www.haproxy.org]. Apžvelgsiu kaip šis algoritmas susitvarko su nutrūkusiu ryšių tarp kelių sistemų, palyginsiu jį su kitais sprendimo būdais naudojamais šiomis dienomis.
+	Algoritmas sprendžia problemą, kaip greičiau ir su mažiau nepageidaujamų pašalinių pasėkmių informuoti klientą apie įvykusią klaidą. Algoritmo veikimo principas naudoja sesijų valdymą, kurios tarpusavyje komunikuoja asinchroninėmis žinutėms tais atvejais, kai ištinka serverio vidinė klaida ir vienas iš serverių tampa nebepasiekiamas vartotojui. Tokiu atveju įgyvendintantas algoritmas nedelsiant praneštų apie nutrukūsį ryši su serveriu ir perspetų esančias klientų sesijas.
 
-Algoritmas sprendžia problemą, kaip greičiau ir su mažiau nepageidaujamų pašalinių pasėkmių informuoti klientą apie įvykusią klaidą. Algoritmas veikimo principas naudoja sesijų valdymą, kurios tarpusavyje komunikuoja asinchroninėmis žinutėms tais atvejais, kai ištinka ryšio vidinė klaida ir vienas iš serverių tampa nebepasiekiamas vartotojui. Šiuo atveju implementuotas algoritmas nedelsiant praneštų vidinei sistemai apie nutrukūsį ryši su serveriu ir perspetų esančias klientų sesijas apie tai.
-
-	Todėl šio darbo tikslas yra pagilinti žinias serverių paskirstymo srityje, paieškoti alternatyvių sprendimo būdų bei išbandyti nagrinėjamą algoritmą praktiškai, jį implementuojant „HaProxy“ sistemoje, palyginant kaip jis veikia kartu su kitais algoritmais, tokiais kaip „Round Robin“, "Leastconn".
+	 Šio darbo tikslas yra įgyvendinti aprašyta algoritmą Haproxy paskirstymo serveryje, paieškoti alternatyvių sprendimo būdų, juos palyginti, ištirti kaip tai veikia kartu su kitais rinkoje naudojamais sprendimo būdais, tokiais kaip „Round Robin“, „Leastconn“.
 
 \section{Medžiagos darbo tema dėstymo skyriai}
 Medžiagos darbo tema dėstymo skyriuose pateikiamos nagrinėjamos temos detalės:
@@ -90,7 +87,7 @@ Scale up reiškia, kad programinė įranga lienka prie monolitinės serverio arc
 Dažniau naudojamas – scale out, kai sistemos architektūra susidaro ne iš monolitinio serverio, o iš kelių ir daugiau kompiuterių, kurie sudaro viena bendrą sistemą. Toks sprendimo būdas yra pigesnis, efektyvesnis, nes vos tik prireikus daugiau našumo, šią sistemą galima papildyti nauju serveriniu įrenginiu. Taigi serverių šeimos yra vadinamos Clustered application ir norint jas suvaldyti reikalinga prieš ją stovinti programinė įranga(reverse proxy), kuri galėtų paskirstyti darbą tarp serverių po lygiai.
 
 \section{Load balancer būdai ir programinės įrangos}
-Kanangi dauguma programinės įrangos įmonių kuria web-service paremtus HTTP protokolu bendraujant su klientu, komponentas atsakingas už įeinantį traffic yra reverse proxy (pvz.: Haproxy) negu Edge router ar L4 (Transport Layer of OSI model) load balance, nes reverse-proxy siūlo daugiau galimybiu stebint traffic su HTTP protokolu, kaip pavyzdžiui load-balacing ar turinio glaudinimas.
+Kanangi dauguma programinės įrangos įmonių projektuoja web-service, dažniausiai paremtais HTTP ar WebSocket protokolas, bendraujant su klientu, komponentas atsakingas už įeinantį traffic yra paskirstymo serveris (pvz.: Haproxy) negu Edge router ar L4 (Transport Layer of OSI model) load balance, nes reverse-proxy siūlo daugiau galimybiu stebint traffic su HTTP protokolu, kaip pavyzdžiui load-balacing ar turinio glaudinimas.
 
 Taip pat yra įmanomas kliento pusėje esantis krūvio paskirstymas, tačiau tai reikalauja atrandamumo(discoverability) ir prisijungiamumas (connectivity) savybių. Atrandamumas pasako būdą, kaip bus identifikuojama topologija - dažniausiai, skaičius serverių, nurodomų portų numerių bei IP adresų. Tokios informacijos užtenka klientui sukonfiguruoti reikiama aplikacijos baseiną(pool). Prisijungiamumas parodo kliento gebėjimą tiesiogiai prisijungti prie tų serverių.
 Plačiausiai šiuo metu rinkoje yra paplitę paskirstytojai: „Haproxy“, „Ngnix“, „F5“, „Citrix ADC“, „Avi Vantage“, „AWS“. Skirtumai tarp šių paskirstytojų yra efekytvumas, našumas, naudojamai skirtingi algoritmai, stebėjimo sistemomis. Be to, jeigu nenorima patiems dėliotis techninės įrangos patiems, galima rinktis „cloud based solutions“, pavyzdžiui, „AWS“. Jeigu norima, kad sistema būtų kontroliuojama pačių programuotojų, reikia rinktis iš „Haproxy“, „Ngnix“/[https://www.techrepublic.com/article/data-center-101-choosing-a-load-balancer]
